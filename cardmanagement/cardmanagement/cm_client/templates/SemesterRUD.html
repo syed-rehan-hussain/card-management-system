@@ -1,0 +1,191 @@
+{% block semesterrud %}
+
+<!-- Modal -->
+  <div  class="modal fade" id="semesterModal" role="dialog">
+    <div style="width:70%;" class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Semester Detail</h4>
+        </div>
+        <div class="modal-body">
+
+
+
+            <div class="table-wrapper">
+                <div class="table-title">
+<!--                    <div class="row">-->
+<!--                        <div class="col-sm-5"><h2>Employee <b>Details</b></h2></div>-->
+<!--                        <div class="col-sm-4">-->
+<!--                            <button type="button" class="btn btn-info add-newsemester"><i class="fa fa-plus"></i> Add New</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Section</th>
+                            <th>Course</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="contentsemester-wrap">
+<!--                        <tr>-->
+<!--                            <td>John Doe</td>-->
+<!--                            <td>Administration</td>-->
+<!--                            <td>(171) 555-2222</td>-->
+<!--                            <td>-->
+<!--                                <a class="addsemester" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>-->
+<!--                                <a class="editsemester" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>-->
+<!--                                <a class="deletesemester" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+<script>
+$(document).ready(function(){
+	$('[data-toggle="tooltip"]').tooltip();
+	var actions = $("table td:last-child").html();
+	// Append table with add row form on add new button click
+    $(".add-newsemester").click(function(){
+		$(this).attr("disabled", "disabled");
+		var index = $("table tbody tr:last-child").index();
+        var row = '<tr>' +
+            '<td><input type="text" class="form-control" name="name" id="name"></td>' +
+            '<td><input type="text" class="form-control" name="department" id="department"></td>' +
+            '<td><input type="text" class="form-control" name="phone" id="phone"></td>' +
+			'<td>' + actions + '</td>' +
+        '</tr>';
+    	$("table").append(row);
+		$("table tbody tr").eq(index + 1).find(".addsemester, .editsemester").toggle();
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+	// Add row on add button click
+	$(document).on("click", ".addsemester", function(){
+		var empty = false;
+		var input = $(this).parents("tr").find('input[type="text"]');
+        input.each(function(){
+			if(!$(this).val()){
+				$(this).addClass("error");
+				empty = true;
+			} else{
+                $(this).removeClass("error");
+            }
+		});
+		$(this).parents("tr").find(".error").first().focus();
+		if(!empty){
+			input.each(function(){
+				$(this).parent("td").html($(this).val());
+			});
+			$(this).parents("tr").find(".addsemester, .editsemester").toggle();
+			$(".add-newsemester").removeAttr("disabled");
+		}
+    });
+	// Edit row on editsemester button click
+	$(document).on("click", ".editsemester", function(){
+        $(this).parents("tr").find("td:not(:last-child)").each(function(){
+			$(this).html('<input type="text" class="form-control" value="' + $(this).text() + '">');
+		});
+		$(this).parents("tr").find(".addsemester, .editsemester").toggle();
+		$(".add-newsemester").attr("disabled", "disabled");
+    });
+	// Delete row on deletesemester button click
+	$(document).on("click", ".deletesemester", function(){
+	    idsem = this.id
+	    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+	    $.ajax({
+            method: 'DELETE',
+            url: '../../api/v1/semesters/'+idsem,
+            dataType: 'json',
+            contentType: 'application/json',
+            headers: {
+                "X-CSRFToken": csrftoken,
+            },
+            success: function(result){
+                $(".deletesemester").parents("tr").remove();
+		        $(".add-newsemester").removeAttr("disabled");
+                alert("Delete Successfully!");
+            },
+            error: function(result){
+                   alert("Foreign Key constraint Error");
+            }
+        })
+    });
+});
+
+
+function sectionfunc(j,k){
+    $.ajax({
+        method: 'GET',
+        url: '../../api/v1/section/'+j,
+        success: function(result){
+            let secname = '';
+            if(result){
+                secname = result.section_no;
+                document.getElementById("sectionname"+k).innerHTML = secname;
+            }
+        }
+    })
+}
+
+
+
+function coursefunc(l,m){
+    $.ajax({
+        method: 'GET',
+        url: '../../api/v1/course/'+l,
+        success: function(result){
+            let couname = '';
+            if(result){
+                couname = result.course_name;
+                document.getElementById("coursename"+m).innerHTML = couname;
+            }
+        }
+    })
+}
+
+
+
+$.ajax({
+    method: 'GET',
+    url: '../../api/v1/semesters/',
+    success: function(result){
+        console.log(result);
+        if(result){
+            let card = '';
+            for(let i = 0; i < result.length; i++){
+                sectionfunc(result[i].section_id, result[i].id);
+                coursefunc(result[i].course_id, result[i].id);
+                card += '<tr><td>'+ result[i].semester +'</td><td>'+ result[i].start_date +'</td><td>'+ result[i].end_date +'</td><td id="sectionname'+result[i].id+'"></td><td id="coursename'+result[i].id+'"></td><td><a class="addsemester" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a><a class="editsemester" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a id="'+ result[i].id +'" class="deletesemester" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td></tr>'
+            }
+            $('.contentsemester-wrap').append(card);
+        }
+    }
+})
+
+</script>
+
+
+
+
+
+{% endblock semesterrud %}

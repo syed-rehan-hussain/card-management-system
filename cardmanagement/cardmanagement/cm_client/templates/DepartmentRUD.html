@@ -1,0 +1,141 @@
+{% block departrud %}
+
+<!-- Modal -->
+  <div  class="modal fade" id="departModal" role="dialog">
+    <div style="width:70%;" class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Departments Detail</h4>
+        </div>
+        <div class="modal-body">
+
+            <div class="table-wrapper">
+                <div class="table-title">
+<!--                    <div class="row">-->
+<!--                        <div class="col-sm-5"><h2>Employee <b>Details</b></h2></div>-->
+<!--                        <div class="col-sm-4">-->
+<!--                            <button type="button" class="btn btn-info add-newdepart"><i class="fa fa-plus"></i> Add New</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Code</th>
+                            <th>Phone</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="content-wrap">
+<!--                        <tr>-->
+<!--                            <td>John Doe</td>-->
+<!--                            <td>Administration</td>-->
+<!--                            <td>(171) 555-2222</td>-->
+<!--                            <td>-->
+<!--                                <a class="adddepart" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>-->
+<!--                                <a class="editdepart" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>-->
+<!--                                <a class="deletedepart" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+<script>
+$(document).ready(function(){
+	$('[data-toggle="tooltip"]').tooltip();
+	var actions = $("table td:last-child").html();
+	// Append table with add row form on add new button click
+
+	// Add row on add button click
+	$(document).on("click", ".adddepart", function(){
+		var empty = false;
+		var input = $(this).parents("tr").find('input[type="text"]');
+        input.each(function(){
+			if(!$(this).val()){
+				$(this).addClass("error");
+				empty = true;
+			} else{
+                $(this).removeClass("error");
+            }
+		});
+		$(this).parents("tr").find(".error").first().focus();
+		if(!empty){
+			input.each(function(){
+				$(this).parent("td").html($(this).val());
+			});
+			$(this).parents("tr").find(".adddepart, .editdepart").toggle();
+			$(".add-newdepart").removeAttr("disabled");
+		}
+    });
+	// Edit row on editdepart button click
+	$(document).on("click", ".editdepart", function(){
+        $(this).parents("tr").find("td:not(:last-child)").each(function(){
+			$(this).html('<input type="text" class="form-control" value="' + $(this).text() + '">');
+		});
+		$(this).parents("tr").find(".adddepart, .editdepart").toggle();
+		$(".add-newdepart").attr("disabled", "disabled");
+    });
+	// Delete row on deletedepart button click
+	$(document).on("click", ".deletedepart", function(){
+	    idd = this.id
+	    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+	    $.ajax({
+            method: 'DELETE',
+            url: '../../api/v1/department/'+idd,
+            dataType: 'json',
+            contentType: 'application/json',
+            headers: {
+                "X-CSRFToken": csrftoken,
+            },
+            success: function(result){
+                alert("Delete Successfully!");
+            }
+        })
+
+        $(this).parents("tr").remove();
+        $(".add-newdepart").removeAttr("disabled");
+
+    });
+});
+
+
+$.ajax({
+    method: 'GET',
+    url: '../../api/v1/department/',
+    success: function(result){
+        console.log(result);
+        if(result){
+            let card = '';
+            for(let i = 0; i < result.length; i++){
+                card += '<tr><td>'+ result[i].dept_name +'</td><td>'+ result[i].dept_code +'</td><td>'+ result[i].phone +'</td><td><a class="adddepart" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a><a class="editdepart" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a id="'+ result[i].id +'"  class="deletedepart" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td></tr>'
+            }
+            $('.content-wrap').append(card);
+        }
+    }
+})
+
+
+
+</script>
+
+
+
+
+
+{% endblock departrud %}

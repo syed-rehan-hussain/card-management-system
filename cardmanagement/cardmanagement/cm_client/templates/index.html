@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round|Open+Sans">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="{% static 'css/font-awesome.min.css'%}">
+  <link rel="stylesheet" href="{% static 'css/style.css'%}">
+  <script src="{% static 'js/jquery.min.js'%}"></script>
+  <script src="{% static 'js/bootstrap.min.js'%}"></script>
+  <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+  <script src="{% static 'js/angular.min.js'%}"></script>
+
+</head>
+<body>
+
+<div ng-app = "" class="container">
+    <div style="width:45%; float:left; margin-right:20px;">
+      <h2>Card Management System</h2>
+      <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#Department">Department</a></li>
+        <li><a data-toggle="tab" href="#Section">Section</a></li>
+        <li><a data-toggle="tab" href="#Course">Course</a></li>
+        <li><a data-toggle="tab" href="#Semester">Semester</a></li>
+        <li><a data-toggle="tab" href="#Student">Student</a></li>
+      </ul>
+
+      <div class="tab-content">
+        <div id="Department" class="tab-pane fade in active">
+                <h2>Add Department</h2>
+                <form id="Department_form" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <label for="dept_name">Department Name:</label>
+                    <input type="text" class="form-control" id="dept_name" placeholder="Enter Department Name" name="dept_name">
+                  </div>
+                  <div class="form-group">
+                    <label for="dept_code">Department Code:</label>
+                    <input type="text" class="form-control" id="dept_code" placeholder="Enter Department Code" name="dept_code">
+                  </div>
+                  <div class="form-group">
+                    <label for="dept_phone">Department Phone:</label>
+                    <input type="text" class="form-control" id="dept_phone" placeholder="Enter Department Phone" name="dept_phone">
+                  </div>
+                  <button type="button" id="submitDepartment" class="btn btn-default">Submit</button>
+                  <div class="alert alert-success" id="depart_alert" style="display:none;">
+                    <strong>Success!</strong> Department Added Successfully.
+                  </div>
+                </form><br/>
+          <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#departModal">Show Department</button>
+          {%block departrud%}{%include 'DepartmentRUD.html'%}{%endblock departrud%}
+        </div>
+        <div id="Section" class="tab-pane fade">
+                <h2>Add Section</h2>
+                <form id="sectionform" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <label for="section_name">Section Name:</label>
+                    <input type="text" class="form-control" id="section_name" placeholder="Enter Section Name" name="section_name">
+                  </div>
+                  <div class="form-group">
+                    <label for="section_year">Section Year:</label>
+                    <input type="year" class="form-control" id="section_year" placeholder="Enter Section Year" name="section_year">
+                  </div>
+                  <button type="button" id="submitSection" class="btn btn-default">Submit</button>
+                  <div class="alert alert-success" id="section_alert" style="display:none;">
+                    <strong>Success!</strong> Section Added Successfully.
+                  </div>
+                </form>
+          <br/>
+          <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#sectionModal">Show Section</button>
+          {%block sectionrud%}{%include 'SectionRUD.html'%}{%endblock sectionrud%}
+        </div>
+        <div id="Course" class="tab-pane fade">
+                <h2>Add Course</h2>
+                <form id="courseform" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <label for="course_name">Course Name:</label>
+                    <input type="text" class="form-control" id="course_name" placeholder="Enter Course Name" name="course_name">
+                  </div>
+                  <div class="form-group">
+                    <label for="course_description">Course Description:</label>
+                    <input type="text" class="form-control" id="course_description" placeholder="Enter Course Description" name="course_description">
+                  </div>
+                  <button type="button" id="submitCourse" class="btn btn-default">Submit</button>
+                  <div class="alert alert-success" id="course_alert" style="display:none;">
+                    <strong>Success!</strong> Course Added Successfully.
+                  </div>
+                </form>
+              <br/>
+              <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#courseModal">Show Courses</button>
+              {%block courserud%}{%include 'CourseRUD.html'%}{%endblock courserud%}
+        </div>
+
+        <div id="Semester" class="tab-pane fade">
+                <h2>Add Semester</h2>
+                <form id="semesterform" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <label for="semester_name">Semester Name:</label>
+                    <input type="text" class="form-control" id="semester_name" placeholder="Enter Course Name" name="semester_name">
+                  </div>
+                  <div class="form-group">
+                    <label for="start_date">Start Date:</label>
+                    <input type="date" class="form-control" id="start_date" placeholder="Enter Start Date" name="start_date">
+                  </div>
+                  <div class="form-group">
+                    <label for="end_date">End Date:</label>
+                    <input type="date" class="form-control" id="end_date" placeholder="Enter End Date" name="end_date">
+                  </div>
+                  <div class="form-group">
+                    <label for="section">Section:</label>
+                    <select class="form-control" id="section_dropdown">
+                      <option selected="true">Select Section</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="course">Course:</label>
+                    <select class="form-control" id="course_dropdown">
+                      <option selected="true">Select Course</option>
+                    </select>
+                  </div>
+                  <button type="button" id="submitSemester" class="btn btn-default">Submit</button>
+                  <div class="alert alert-success" id="semester_alert" style="display:none;">
+                    <strong>Success!</strong> Semester Added Successfully.
+                  </div>
+                </form>
+                <br/>
+                <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#semesterModal">Show Semester</button>
+                {%block semesterrud%}{%include 'SemesterRUD.html'%}{%endblock semesterrud%}
+        </div>
+
+        <div id="Student" class="tab-pane fade">
+                <h2>Add Student</h2>
+                <form id="studentform" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <label for="first_name">First Name:</label>
+                    <input ng-model="firstname" type="text" class="form-control" id="first_name" placeholder="Enter First Name" name="first_name">
+                  </div>
+                  <div class="form-group">
+                    <label for="last_name">Last Name:</label>
+                    <input ng-model="lastname" type="text" class="form-control" id="last_name" placeholder="Enter Last Name" name="last_name">
+                  </div>
+                  <div class="form-group">
+                    <label for="father_name">Father Name:</label>
+                    <input ng-model="fathername" type="text" class="form-control" id="father_name" placeholder="Enter Father Name"  name="father_name">
+                  </div>
+                  <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter Email" name="email">
+                  </div>
+                  <div class="form-group">
+                    <label for="phone">Phone:</label>
+                    <input type="text" class="form-control" id="phone" placeholder="Enter Phone Num" name="phone">
+                  </div>
+                  <div class="form-group">
+                    <label for="address">Address:</label>
+                    <input type="text" ng-model="address" class="form-control" id="address" placeholder="Enter Address" name="address">
+                  </div>
+                  <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter Password" name="password">
+                  </div>
+                  <div class="form-group">
+                    <label for="semester">Semester:</label>
+                    <select class="form-control" id="semester_dropdown">
+                      <option selected="true">Select Semester</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="stu_department">Department:</label>
+                    <select class="form-control" id="depart_dropdown">
+                      <option selected="true">Select Department</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="profile">Profile:</label>
+                    <input type="file" onchange="loadFile(event)" class="form-control" id="profile" placeholder="Enter Profile" name="profile">
+                  </div>
+                  <button type="button" id="submitStudent" class="btn btn-default">Submit</button>
+                  <div class="alert alert-success" id="student_alert" style="display:none;">
+                    <strong>Success!</strong> Student Added Successfully.
+                  </div>
+                </form>
+                <br/>
+                <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#studentModal">Show Student</button>
+                {%block studentrud%}{%include 'StudentRUD.html'%}{%endblock studentrud%}
+        </div>
+      </div>
+    </div>
+    <div style="width:45%; float:left; margin:120px 0 0 20px;">
+      <a href="http://localhost:8021/client/generated/"><button type="button" style="margin:10px 30%; " id="generatecard" class="btn btn-default">Generate All Student Cards</button></a>
+      {%block card%}{%include 'card.html'%}{%endblock card%}
+    </div>
+</div>
+<br/>
+<br/>
+<br/>
+<br/>
+<script>
+$('#first_name').keyup(function() {
+  var fname = $('#first_name').val()
+  if(fname){
+      $("#entername").css("display", "none")
+  }
+  else{
+      $("#entername").css("display", "block")
+  }
+});
+
+$("#depart_dropdown").click(function(){
+  var dname = $( "#depart_dropdown option:selected" ).text();
+  $("#depart").text(dname);
+});
+
+$("#semester_dropdown").click(function(){
+  var sname = $( "#semester_dropdown option:selected" ).text();
+  $("#semestercard").text(sname);
+});
+
+var loadFile = function(event) {
+	var image = document.getElementById('output');
+	image.src = URL.createObjectURL(event.target.files[0]);
+};
+</script>
+<script type="text/javascript" src="{% static 'js/department.js'%}"></script>
+<script type="text/javascript" src="{% static 'js/section.js'%}"></script>
+<script type="text/javascript" src="{% static 'js/course.js'%}"></script>
+<script type="text/javascript" src="{% static 'js/semester.js'%}"></script>
+<script type="text/javascript" src="{% static 'js/student.js'%}"></script>
+
+</body>
+</html>

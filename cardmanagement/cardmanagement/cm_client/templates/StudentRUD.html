@@ -1,0 +1,144 @@
+{% block studentrud %}
+
+<!-- Modal -->
+  <div  class="modal fade" id="studentModal" role="dialog">
+    <div style="width:70%;" class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Students Detail</h4>
+        </div>
+        <div class="modal-body">
+
+
+
+            <div class="table-wrappere">
+                <div class="table-title">
+<!--                    <div class="row">-->
+<!--                        <div class="col-sm-5"><h2>Employee <b>Details</b></h2></div>-->
+<!--                        <div class="col-sm-4">-->
+<!--                            <button type="button" class="btn btn-info add-newstudent"><i class="fa fa-plus"></i> Add New</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Father Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Semester</th>
+                            <th>Department</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="contentstudent-wrap">
+<!--                        <tr>-->
+<!--                            <td>John Doe</td>-->
+<!--                            <td>Administration</td>-->
+<!--                            <td>(171) 555-2222</td>-->
+<!--                            <td>-->
+<!--                                <a class="addstudent" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>-->
+<!--                                <a class="editstudent" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>-->
+<!--                                <a class="deletestudent" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+<script>
+$(document).ready(function(){
+	$('[data-toggle="tooltip"]').tooltip();
+	var actions = $("table td:last-child").html();
+	// Append table with add row form on add new button click
+    $(".add-newstudent").click(function(){
+		$(this).attr("disabled", "disabled");
+		var index = $("table tbody tr:last-child").index();
+        var row = '<tr>' +
+            '<td><input type="text" class="form-control" name="name" id="name"></td>' +
+            '<td><input type="text" class="form-control" name="department" id="department"></td>' +
+            '<td><input type="text" class="form-control" name="phone" id="phone"></td>' +
+			'<td>' + actions + '</td>' +
+        '</tr>';
+    	$("table").append(row);
+		$("table tbody tr").eq(index + 1).find(".addstudent, .editstudent").toggle();
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+	// Add row on add button click
+	$(document).on("click", ".addstudent", function(){
+		var empty = false;
+		var input = $(this).parents("tr").find('input[type="text"]');
+        input.each(function(){
+			if(!$(this).val()){
+				$(this).addClass("error");
+				empty = true;
+			} else{
+                $(this).removeClass("error");
+            }
+		});
+		$(this).parents("tr").find(".error").first().focus();
+		if(!empty){
+			input.each(function(){
+				$(this).parent("td").html($(this).val());
+			});
+			$(this).parents("tr").find(".addstudent, .editstudent").toggle();
+			$(".add-newstudent").removeAttr("disabled");
+		}
+    });
+	// Edit row on editstudent button click
+	$(document).on("click", ".editstudent", function(){
+        $(this).parents("tr").find("td:not(:last-child)").each(function(){
+			$(this).html('<input type="text" class="form-control" value="' + $(this).text() + '">');
+		});
+		$(this).parents("tr").find(".addstudent, .editstudent").toggle();
+		$(".add-newstudent").attr("disabled", "disabled");
+    });
+	// Delete row on deletestudent button click
+	$(document).on("click", ".deletestudent", function(){
+        $(this).parents("tr").remove();
+		$(".add-newstudent").removeAttr("disabled");
+    });
+});
+
+
+$.ajax({
+    method: 'GET',
+    url: '../../api/v1/student/',
+    success: function(result){
+        console.log(result);
+        if(result){
+            let card = '';
+            for(let i = 0; i < result.length; i++){
+                console.log("email "+result[i])
+                card += '<tr><td><image src="'+ result[i].image +'" style="width:200px; "/></td><td>'+ result[i].first_name +'</td><td>'+ result[i].last_name +'</td><td>'+ result[i].father_name +'</td><td>'+ result[i].email +'</td>'+ result[i].phone +'<td></td><td>'+ result[i].address +'</td><td id="semestername">'+result[i].semester_id+'</td><td id="departname">'+result[i].department_id+'</td><td><a class="addstudent" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a><a class="editstudent" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="deletestudent" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a> </td></tr>'
+            }
+            $('.contentstudent-wrap').append(card);
+        }
+    }
+})
+</script>
+
+
+
+
+
+{% endblock studentrud %}
