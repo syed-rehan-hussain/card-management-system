@@ -29,7 +29,18 @@ $.ajax({
 
 
 
-$("#submitStudent").click(function(){
+$("#submitStudent").click(function() {
+    let formData = new FormData();
+    formData.append("first_name", $("#first_name").val());
+    formData.append("last_name", $("#last_name").val());
+    formData.append("father_name", $("#father_name").val());
+    formData.append("email", $("#email").val());
+    formData.append("phone", $("#phone").val());
+    formData.append("address", $("#address").val());
+    formData.append("password", $("#password").val());
+    formData.append("semester_id", $("#semester_dropdown").val());
+    formData.append("department_id", $("#depart_dropdown").val());
+    formData.append("image", $('input[type=file]')[0].files[0]);
         first_name = $("#first_name").val();
         last_name = $("#last_name").val();
         father_name = $("#father_name").val();
@@ -40,10 +51,8 @@ $("#submitStudent").click(function(){
         semester_id = $("#semester_dropdown").val();
         department_id = $("#depart_dropdown").val();
         image = $("#profile").val();
-        alert("image : "+image);
-        image = image.split("\\");
-        image = image[image.length - 1];
-        alert("image : "+image)
+//        image = image.split("\\");
+//        image = image[image.length - 1];
 //        console.log("image : "+image);
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         student_data = JSON.stringify({
@@ -60,10 +69,14 @@ $("#submitStudent").click(function(){
         })
         $.ajax({
             method: "POST",
+            processData: false,
+            contentType: false,
+            cache: false,
+            enctype: 'multipart/form-data',
             url: "http://localhost:8021/api/v1/student/",
-            dataType: 'json',
-            contentType: 'application/json',
-            data: student_data,
+//            dataType: 'json',
+//            contentType: 'application/json',
+            data: formData,
             headers: {
                 "X-CSRFToken": csrftoken,
             },

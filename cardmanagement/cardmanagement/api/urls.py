@@ -20,5 +20,5 @@ urlpatterns = [
     path('student/', StudentCreateView.as_view(), name='student_create'),
     path('student/<int:pk>', StudentView.as_view(), name='student'),
 ]
-if settings.DEBUG:
+if settings.DEBUG:  # new
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

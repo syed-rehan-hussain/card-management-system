@@ -116,7 +116,7 @@ class StudentCreateView(generics.ListCreateAPIView):
         try:
             semester = Semester.objects.filter(pk=request.data['semester_id'], is_deleted=False)[0]
             department = Department.objects.filter(pk=request.data['department_id'], is_deleted=False)[0]
-            file = request.data['image']
+            file = request.FILES['image']
             Student.objects.create(first_name=request.data['first_name'],
                                    last_name=request.data['last_name'],
                                    father_name=request.data['father_name'],

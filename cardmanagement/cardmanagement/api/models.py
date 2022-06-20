@@ -107,7 +107,7 @@ class Student(BaseModel):
     password = models.CharField(max_length=500, null=True)
     semester_id = models.ForeignKey(Semester, on_delete=models.CASCADE, null=True, related_name='semester_id')
     department_id = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, related_name='department_id')
-    image = models.ImageField(upload_to=nameFile, blank=True, null=True)
+    image = models.ImageField(upload_to='images/', blank=True, null=True)
 
     class Meta:
         db_table = 'student'
